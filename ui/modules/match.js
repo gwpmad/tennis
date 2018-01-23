@@ -1,6 +1,7 @@
 import { createAction, handleActions } from 'redux-actions';
 
-export const reset = createAction('RESET');
+const actionsPrefix = 'tennis/match/';
+export const reset = createAction(`${actionsPrefix}RESET`);
 
 const defaultState = {
   player1sets: 0,

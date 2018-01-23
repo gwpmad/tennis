@@ -2,6 +2,9 @@ const { resolve } = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
+  devServer: {
+    contentBase: './dist',
+  },
   entry: ['./ui/index.jsx'],
   output: {
     path: resolve(__dirname, 'dist'),
