@@ -3,6 +3,14 @@
   "extends": "airbnb",
   "env": {
     "browser": true,
-    "node": true
+    "node": true,
+    "mocha": true
+  },
+  "rules" : {
+    "react/prop-types": 0,
+    "react/forbid-prop-types": 0,
+    "react/require-default-props": 0,
+    "object-curly-newline": 0,
+    "function-paren-newline": 0
   }
 }

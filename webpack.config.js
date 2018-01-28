@@ -5,7 +5,7 @@ module.exports = {
   devServer: {
     contentBase: './dist',
   },
-  entry: ['./ui/index.jsx'],
+  entry: ['./src/ui/index.jsx'],
   output: {
     path: resolve(__dirname, 'dist'),
     filename: 'bundle.js',

@@ -13,3 +13,5 @@ const defaultState = {
 export default handleActions({
   [reset]: () => ({ ...defaultState }),
 }, defaultState);
+
+// record individual set scores
