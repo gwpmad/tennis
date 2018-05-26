@@ -1,6 +1,5 @@
 import { createAction, handleActions } from 'redux-actions';
 import { createSelector } from 'reselect';
-import { reset } from './match';
 import { tieBreakReached, calculateWinner } from '../lib/set-logic';
 
 const actionsPrefix = 'tennis/set/';
@@ -16,8 +15,6 @@ const defaultState = {
 };
 
 export default handleActions({
-  [reset]: () => ({ ...defaultState }),
-
   [newSet]: () => ({ ...defaultState }),
 
   [incrementGames]: (state, { payload: player }) =>

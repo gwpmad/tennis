@@ -1,7 +1,5 @@
-import { createAction, handleActions } from 'redux-actions';
+import { handleActions } from 'redux-actions';
 
-const actionsPrefix = 'tennis/match/';
-export const reset = createAction(`${actionsPrefix}RESET`);
 
 const defaultState = {
   player1sets: 0,
@@ -11,7 +9,6 @@ const defaultState = {
 };
 
 export default handleActions({
-  [reset]: () => ({ ...defaultState }),
 }, defaultState);
 
 // record individual set scores

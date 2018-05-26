@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
-import * as gameActions from '../modules/game';
+import * as game from '../modules/game';
+import * as set from '../modules/set';
 
 class ScoreButton extends Component {
   @autobind
@@ -17,20 +18,41 @@ class ScoreButton extends Component {
   }
 }
 class App extends Component {
+  componentDidUpdate() {
+    const { winner, incrementGames, newGame } = this.props;
+    if (winner) {
+      incrementGames(winner);
+      newGame();
+    }
+  }
+
   @autobind
   score(playerNumber) {
-    this.props.incrementPoints(`player${playerNumber}`);
+    const { incrementPoints, deuceScorePoints, deuce } = this.props;
+    const playerName = `player${playerNumber}`;
+    if (deuce) {
+      return deuceScorePoints(playerName);
+    }
+    return incrementPoints(playerName);
   }
 
   render() {
+    const getPointsText = (playerNumber) => {
+      const firstText = `Player ${playerNumber}: `;
+      if (this.props.deuce && this.props.game.advantage === `player${playerNumber}`) {
+        return `${firstText}ADVANTAGE`;
+      }
+      return `${firstText}${this.props.game[`player${playerNumber}Points`]}`;
+    };
+
     return (
       <div>
         <div>
           <div>
             <div>
               <h4>Game</h4>
-              <div>Player 1: {this.props.game.player1Points}</div>
-              <div>Player 2: {this.props.game.player2Points}</div>
+              <div>{getPointsText(1)}</div>
+              <div>{getPointsText(2)}</div>
             </div>
             <div>
               <h4>Current Set</h4>
@@ -49,13 +71,23 @@ App.propTypes = {
   game: PropTypes.object.isRequired,
   set: PropTypes.object.isRequired,
   incrementPoints: PropTypes.func.isRequired,
+  incrementGames: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = {
-  incrementPoints: gameActions.incrementPoints,
+  incrementPoints: game.incrementPoints,
+  incrementGames: set.incrementGames,
+  deuceScorePoints: game.deuceScorePoints,
+  newGame: game.newGame,
 };
 
 export default connect(
-  ({ match, set, game, tieBreak }) => ({ match, set, game, tieBreak }),
+  state => ({
+    match: state.match,
+    set: state.set,
+    game: state.game,
+    deuce: game.deuce(state.game),
+    winner: game.winner(state.game),
+  }),
   mapDispatchToProps,
 )(App);

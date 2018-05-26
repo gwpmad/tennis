@@ -28,6 +28,8 @@ describe('Portions of state: game:', () => {
       store.dispatch(deuceScorePoints('player1'));
       deepEqual([store.getState().advantage, store.getState().deuceWinner], ['player1', null]);
       store.dispatch(deuceScorePoints('player2'));
+      deepEqual([store.getState().advantage, store.getState().deuceWinner], [null, null]);
+      store.dispatch(deuceScorePoints('player2'));
       deepEqual([store.getState().advantage, store.getState().deuceWinner], ['player2', null]);
       store.dispatch(deuceScorePoints('player2'));
       deepEqual([store.getState().advantage, store.getState().deuceWinner], [null, 'player2']);
