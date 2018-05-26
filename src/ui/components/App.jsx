@@ -19,9 +19,9 @@ class ScoreButton extends Component {
 }
 class App extends Component {
   componentDidUpdate() {
-    const { winner, incrementGames, newGame } = this.props;
-    if (winner) {
-      incrementGames(winner);
+    const { gameWinner, incrementGames, newGame } = this.props;
+    if (gameWinner) {
+      incrementGames(gameWinner);
       newGame();
     }
   }
@@ -83,11 +83,12 @@ const mapDispatchToProps = {
 
 export default connect(
   state => ({
-    match: state.match,
     set: state.set,
     game: state.game,
     deuce: game.deuce(state.game),
-    winner: game.winner(state.game),
+    gameWinner: game.winner(state.game),
+    setWinner: set.winner(state.set),
+    tieBreak: set.tieBreak(state.set),
   }),
   mapDispatchToProps,
 )(App);

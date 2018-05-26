@@ -37,5 +37,3 @@ export const winner = createSelector([
   state => state.player1TieBreakPoints,
   state => state.player2TieBreakPoints,
 ], (...args) => calculateWinner(...args));
-
-// selectors for winner, tieBreak

@@ -36,23 +36,19 @@ describe('Portions of state: set:', () => {
   beforeEach(() => store.dispatch(newSet()));
 
   describe('reducers:', () => {
-    describe('keeping set score:', () => {
-      it('increments the games of a player', () => {
-        store.dispatch(incrementGames('player1'));
-        store.dispatch(incrementGames('player1'));
-        store.dispatch(incrementGames('player2'));
-        deepEqual([store.getState().player1Games, store.getState().player2Games], [2, 1]);
-      });
+    it('increments the games of a player', () => {
+      store.dispatch(incrementGames('player1'));
+      store.dispatch(incrementGames('player1'));
+      store.dispatch(incrementGames('player2'));
+      deepEqual([store.getState().player1Games, store.getState().player2Games], [2, 1]);
     });
 
-    describe('keeping tie break score', () => {
-      it('increments the tie break points of a player', () => {
-        store.dispatch(incrementTieBreakPoints('player1'));
-        store.dispatch(incrementTieBreakPoints('player1'));
-        store.dispatch(incrementTieBreakPoints('player2'));
-        deepEqual([store.getState().player1TieBreakPoints, store.getState().player2TieBreakPoints],
-          [2, 1]);
-      });
+    it('increments the tie break points of a player', () => {
+      store.dispatch(incrementTieBreakPoints('player1'));
+      store.dispatch(incrementTieBreakPoints('player1'));
+      store.dispatch(incrementTieBreakPoints('player2'));
+      deepEqual([store.getState().player1TieBreakPoints, store.getState().player2TieBreakPoints],
+        [2, 1]);
     });
   });
 

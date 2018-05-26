@@ -19,7 +19,6 @@ export const tieBreakReached = (...playersGames) =>
 
 export const calculateWinner =
   (tieBreak, player1Games, player2Games, player1TieBreakPoints, player2TieBreakPoints) => {
-    // const gamesMap = { player1: player1Games, player2: player2Games };
     if (tieBreak) {
       return calculateTieBreakWinner([
         { player: 'player1', points: player1TieBreakPoints },
