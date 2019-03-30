@@ -17,11 +17,11 @@ const defaultState = {
 export default handleActions({
   [newSet]: () => ({ ...defaultState }),
 
-  [incrementGames]: (state, { payload: player }) =>
-    ({ ...state, [`${player}Games`]: state[`${player}Games`] + 1 }),
+  [incrementGames]: (state, { payload: playerIdx }) =>
+    ({ ...state, [`player${playerIdx + 1}Games`]: state[`player${playerIdx + 1}Games`] + 1 }),
 
-  [incrementTieBreakPoints]: (state, { payload: player }) =>
-    ({ ...state, [`${player}TieBreakPoints`]: state[`${player}TieBreakPoints`] + 1 }),
+  [incrementTieBreakPoints]: (state, { payload: playerIdx }) =>
+    ({ ...state, [`player${playerIdx + 1}TieBreakPoints`]: state[`player${playerIdx + 1}TieBreakPoints`] + 1 }),
 
 }, defaultState);
 

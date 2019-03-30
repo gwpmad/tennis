@@ -5,17 +5,33 @@ export const getNextPoints = currentPoints => pointsScale[pointsScale.indexOf(cu
 export const deuceReached = (...playersPoints) => playersPoints.every(points => points === 40);
 
 export const calculateDeuceScore = ({ advantage }, playerWhoScored) => {
-  if (advantage) {
+  const result = { playerWithAdvantage: null, deuceWinner: null };
+  if (advantage !== null) {
     if (advantage === playerWhoScored) {
-      return { playerWithAdvantage: null, deuceWinner: playerWhoScored };
+      result.deuceWinner = playerWhoScored;
     }
-    return { playerWithAdvantage: null, deuceWinner: null };
+  } else {
+    result.playerWithAdvantage = playerWhoScored;
   }
-  return { playerWithAdvantage: playerWhoScored, deuceWinner: null };
+  return result;
 };
 
-export const calculateWinner = (pointsMap, deuceWinner) => {
+export const calculateWinner = (deuceWinner, ...playersPoints) => {
   if (deuceWinner) return deuceWinner;
-  return Object.keys(pointsMap).reduce(
-    (winner, player) => winner || (pointsMap[player] > 40 ? player : null), null);
+  return playersPoints.reduce((winner, points, idx) => {
+    if (winner !== null) return winner;
+    return points > 40 ? idx : null;
+  }, null);
+};
+
+export const getScoreCall = (deuce, advantage, ...playersPoints) => {
+  if (deuce) {
+    if (advantage !== null) {
+      const [p1Call, p2Call] = playersPoints.map((points, idx) => (idx === advantage ? 'Advantage' : points));
+      return `${p1Call} - ${p2Call}`;
+    }
+    return 'Deuce';
+  }
+  const [p1Call, p2Call] = playersPoints.map(points => (points === 0 ? 'love' : points));
+  return p1Call === p2Call ? `${p1Call} all` : `${p1Call} - ${p2Call}`;
 };

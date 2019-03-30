@@ -4,31 +4,31 @@ import setReducer, { incrementGames, incrementTieBreakPoints, newSet, tieBreak, 
 
 const fastForwardToTieBreak = (store) => {
   for (let i = 0; i < 6; i += 1) {
-    store.dispatch(incrementGames('player1'));
-    store.dispatch(incrementGames('player2'));
+    store.dispatch(incrementGames(0));
+    store.dispatch(incrementGames(1));
   }
 };
 
 const fastForwardToPlayer1TieBreakWin = (store) => {
   for (let i = 0; i < 7; i += 1) {
-    store.dispatch(incrementTieBreakPoints('player1'));
+    store.dispatch(incrementTieBreakPoints(0));
   }
 };
 
 const fastForwardToTieBreak6All = (store) => {
   for (let i = 0; i < 6; i += 1) {
-    store.dispatch(incrementTieBreakPoints('player1'));
-    store.dispatch(incrementTieBreakPoints('player2'));
+    store.dispatch(incrementTieBreakPoints(0));
+    store.dispatch(incrementTieBreakPoints(1));
   }
 };
 
 const fastForwardToPlayer1SetWin = (store) => {
   for (let i = 0; i < 5; i += 1) {
-    store.dispatch(incrementGames('player1'));
-    store.dispatch(incrementGames('player2'));
+    store.dispatch(incrementGames(0));
+    store.dispatch(incrementGames(1));
   }
-  store.dispatch(incrementGames('player1'));
-  store.dispatch(incrementGames('player1'));
+  store.dispatch(incrementGames(0));
+  store.dispatch(incrementGames(0));
 };
 
 describe('Portions of state: set:', () => {
@@ -37,16 +37,16 @@ describe('Portions of state: set:', () => {
 
   describe('reducers:', () => {
     it('increments the games of a player', () => {
-      store.dispatch(incrementGames('player1'));
-      store.dispatch(incrementGames('player1'));
-      store.dispatch(incrementGames('player2'));
+      store.dispatch(incrementGames(0));
+      store.dispatch(incrementGames(0));
+      store.dispatch(incrementGames(1));
       deepEqual([store.getState().player1Games, store.getState().player2Games], [2, 1]);
     });
 
     it('increments the tie break points of a player', () => {
-      store.dispatch(incrementTieBreakPoints('player1'));
-      store.dispatch(incrementTieBreakPoints('player1'));
-      store.dispatch(incrementTieBreakPoints('player2'));
+      store.dispatch(incrementTieBreakPoints(0));
+      store.dispatch(incrementTieBreakPoints(0));
+      store.dispatch(incrementTieBreakPoints(1));
       deepEqual([store.getState().player1TieBreakPoints, store.getState().player2TieBreakPoints],
         [2, 1]);
     });
@@ -65,19 +65,19 @@ describe('Portions of state: set:', () => {
       equal(winner(store.getState()), null);
       fastForwardToTieBreak6All(store);
       equal(winner(store.getState()), null);
-      store.dispatch(incrementTieBreakPoints('player1'));
+      store.dispatch(incrementTieBreakPoints(0));
       equal(winner(store.getState()), null);
     });
 
     it('figures out the winner in a tie break set, if there is one', () => {
       fastForwardToTieBreak(store);
       fastForwardToPlayer1TieBreakWin(store);
-      equal(winner(store.getState()), 'player1');
+      equal(winner(store.getState()), 0);
     });
 
     it('figures out the winner in a non-tie break set, if there is one', () => {
       fastForwardToPlayer1SetWin(store);
-      equal(winner(store.getState()), 'player1');
+      equal(winner(store.getState()), 0);
     });
   });
 });

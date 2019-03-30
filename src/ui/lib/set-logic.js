@@ -1,18 +1,16 @@
-const calculateTieBreakWinner = (tieBreakPointsMap) => {
-  const [potentialLoser, potentialWinner] = tieBreakPointsMap.sort((a, b) => a.points - b.points);
-  if (potentialWinner.points > 6 && potentialWinner.points - potentialLoser.points >= 2) {
-    return potentialWinner.player;
-  }
-  return null;
-};
+const calculateTieBreakWinner = (...tieBreakPoints) =>
+  tieBreakPoints.reduce((winner, points, idx) => {
+    if (winner !== null) return winner;
+    const otherPlayerIdx = idx === 0 ? 1 : 0;
+    return (points > 6 && points - tieBreakPoints[otherPlayerIdx] >= 2) ? idx : null;
+  }, null);
 
-const calculateSetWinner = (gamesMap) => {
-  const [potentialLoser, potentialWinner] = gamesMap.sort((a, b) => a.games - b.games);
-  if (potentialWinner.games > 6 && potentialWinner.games - potentialLoser.games >= 2) {
-    return potentialWinner.player;
-  }
-  return null;
-};
+const calculateSetWinner = (...playersGames) =>
+  playersGames.reduce((winner, games, idx) => {
+    if (winner !== null) return winner;
+    const otherPlayerIdx = idx === 0 ? 1 : 0;
+    return games > 6 && games - playersGames[otherPlayerIdx] >= 2 ? idx : null;
+  }, null);
 
 export const tieBreakReached = (...playersGames) =>
   playersGames.every(games => games === 6);
@@ -20,14 +18,8 @@ export const tieBreakReached = (...playersGames) =>
 export const calculateWinner =
   (tieBreak, player1Games, player2Games, player1TieBreakPoints, player2TieBreakPoints) => {
     if (tieBreak) {
-      return calculateTieBreakWinner([
-        { player: 'player1', points: player1TieBreakPoints },
-        { player: 'player2', points: player2TieBreakPoints },
-      ]);
+      return calculateTieBreakWinner(player1TieBreakPoints, player2TieBreakPoints);
     }
 
-    return calculateSetWinner([
-      { player: 'player1', games: player1Games },
-      { player: 'player2', games: player2Games },
-    ]);
+    return calculateSetWinner(player1Games, player2Games);
   };

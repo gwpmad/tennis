@@ -2,74 +2,59 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
+import ScoreBoard from './ScoreBoard';
 import * as game from '../modules/game';
 import * as set from '../modules/set';
+import * as match from '../modules/match';
 
 class ScoreButton extends Component {
   @autobind
   _onClick() {
-    this.props.onClick(this.props.playerNumber);
+    this.props.onClick(this.props.player);
   }
   render() {
     return (
       <button onClick={this._onClick}>
-        Player {this.props.playerNumber}
+        Player {this.props.player + 1}
       </button>);
   }
 }
+
 class App extends Component {
   componentDidUpdate() {
-    const { gameWinner, incrementGames, newGame } = this.props;
-    if (gameWinner) {
+    const { gameWinner, incrementGames, newGame, setWinner, incrementSets, newSet } = this.props;
+    if (gameWinner !== null) {
       incrementGames(gameWinner);
       newGame();
+    }
+    if (setWinner !== null) {
+      incrementSets(setWinner);
+      newSet();
     }
   }
 
   @autobind
-  score(playerNumber) {
+  score(player) {
     const { incrementPoints, deuceScorePoints, deuce } = this.props;
-    const playerName = `player${playerNumber}`;
     if (deuce) {
-      return deuceScorePoints(playerName);
+      return deuceScorePoints(player);
     }
-    return incrementPoints(playerName);
+    return incrementPoints(player);
   }
 
   render() {
-    const getPointsText = (playerNumber) => {
-      const firstText = `Player ${playerNumber}: `;
-      if (this.props.deuce && this.props.game.advantage === `player${playerNumber}`) {
-        return `${firstText}ADVANTAGE`;
-      }
-      return `${firstText}${this.props.game[`player${playerNumber}Points`]}`;
-    };
-
     return (
       <div>
         <div>
-          <div>
-            <div>
-              <h4>Game</h4>
-              <div>{getPointsText(1)}</div>
-              <div>{getPointsText(2)}</div>
-            </div>
-            <div>
-              <h4>Current Set</h4>
-              <div>Player 1: {this.props.set.player1Games}</div>
-              <div>Player 2: {this.props.set.player2Games}</div>
-            </div>
-          </div>
-          <ScoreButton playerNumber={1} onClick={this.score} />
-          <ScoreButton playerNumber={2} onClick={this.score} />
+          <ScoreBoard />
+          <ScoreButton player={0} onClick={this.score} />
+          <ScoreButton player={1} onClick={this.score} />
         </div>
       </div>);
   }
 }
 
 App.propTypes = {
-  game: PropTypes.object.isRequired,
-  set: PropTypes.object.isRequired,
   incrementPoints: PropTypes.func.isRequired,
   incrementGames: PropTypes.func.isRequired,
 };
@@ -77,14 +62,17 @@ App.propTypes = {
 const mapDispatchToProps = {
   incrementPoints: game.incrementPoints,
   incrementGames: set.incrementGames,
+  incrementSets: match.incrementSets,
   deuceScorePoints: game.deuceScorePoints,
   newGame: game.newGame,
+  newSet: set.newSet,
 };
 
 export default connect(
   state => ({
-    set: state.set,
     game: state.game,
+    set: state.set,
+    match: state.match,
     deuce: game.deuce(state.game),
     gameWinner: game.winner(state.game),
     setWinner: set.winner(state.set),

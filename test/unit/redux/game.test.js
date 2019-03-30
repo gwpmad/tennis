@@ -1,12 +1,12 @@
 import { equal, deepEqual } from 'assert';
 import { createStore } from 'redux';
-import gameReducer, { incrementPoints, deuceScorePoints, deuce, winner, newGame } from '../../../src/ui/modules/game';
+import gameReducer, { incrementPoints, deuceScorePoints, deuce, winner, newGame, scoreCall } from '../../../src/ui/modules/game';
 import { pointsScale } from '../../../src/ui/lib/game-logic';
 
 const fastForwardToDeuce = (store) => {
   for (let i = 0; i < 3; i += 1) {
-    store.dispatch(incrementPoints('player1'));
-    store.dispatch(incrementPoints('player2'));
+    store.dispatch(incrementPoints(0));
+    store.dispatch(incrementPoints(1));
   }
 };
 
@@ -17,7 +17,7 @@ describe('Portions of state: game:', () => {
   describe('reducers:', () => {
     it('increments the points of a player', () => {
       pointsScale.slice(1).forEach((newPoints) => {
-        store.dispatch(incrementPoints('player1')); store.dispatch(incrementPoints('player2'));
+        store.dispatch(incrementPoints(0)); store.dispatch(incrementPoints(1));
         equal(store.getState().player1Points, newPoints);
         equal(store.getState().player2Points, newPoints);
       });
@@ -25,14 +25,14 @@ describe('Portions of state: game:', () => {
 
     it('handles deuce scoring', () => {
       deepEqual([store.getState().advantage, store.getState().deuceWinner], [null, null]);
-      store.dispatch(deuceScorePoints('player1'));
-      deepEqual([store.getState().advantage, store.getState().deuceWinner], ['player1', null]);
-      store.dispatch(deuceScorePoints('player2'));
+      store.dispatch(deuceScorePoints(0));
+      deepEqual([store.getState().advantage, store.getState().deuceWinner], [0, null]);
+      store.dispatch(deuceScorePoints(1));
       deepEqual([store.getState().advantage, store.getState().deuceWinner], [null, null]);
-      store.dispatch(deuceScorePoints('player2'));
-      deepEqual([store.getState().advantage, store.getState().deuceWinner], ['player2', null]);
-      store.dispatch(deuceScorePoints('player2'));
-      deepEqual([store.getState().advantage, store.getState().deuceWinner], [null, 'player2']);
+      store.dispatch(deuceScorePoints(1));
+      deepEqual([store.getState().advantage, store.getState().deuceWinner], [1, null]);
+      store.dispatch(deuceScorePoints(1));
+      deepEqual([store.getState().advantage, store.getState().deuceWinner], [null, 1]);
     });
   });
 
@@ -48,14 +48,37 @@ describe('Portions of state: game:', () => {
     });
 
     it('figures out the winner in a non-deuce game, if there is one', () => {
-      pointsScale.slice(1).forEach(() => store.dispatch(incrementPoints('player1')));
-      equal(winner(store.getState()), 'player1');
+      pointsScale.slice(1).forEach(() => store.dispatch(incrementPoints(0)));
+      equal(winner(store.getState()), 0);
     });
 
     it('figures out the winner in a deuce game, if there is one', () => {
-      store.dispatch(deuceScorePoints('player2'));
-      store.dispatch(deuceScorePoints('player2'));
-      equal(winner(store.getState()), 'player2');
+      store.dispatch(deuceScorePoints(1));
+      store.dispatch(deuceScorePoints(1));
+      equal(winner(store.getState()), 1);
+    });
+
+    it('computes the call (in English) for points in a non-deuce scenario', () => {
+      equal(scoreCall(store.getState()), 'love all');
+      store.dispatch(incrementPoints(0));
+      equal(scoreCall(store.getState()), '15 - love');
+      store.dispatch(incrementPoints(0));
+      equal(scoreCall(store.getState()), '30 - love');
+      store.dispatch(incrementPoints(1));
+      equal(scoreCall(store.getState()), '30 - 15');
+      store.dispatch(incrementPoints(1));
+      equal(scoreCall(store.getState()), '30 all');
+    });
+
+    it('computes the call (in English) for points in a deuce scenario', () => {
+      fastForwardToDeuce(store);
+      equal(scoreCall(store.getState()), 'Deuce');
+      store.dispatch(deuceScorePoints(0));
+      equal(scoreCall(store.getState()), 'Advantage - 40');
+      store.dispatch(deuceScorePoints(1));
+      equal(scoreCall(store.getState()), 'Deuce');
+      store.dispatch(deuceScorePoints(1));
+      equal(scoreCall(store.getState()), '40 - Advantage');
     });
   });
 });

@@ -1,6 +1,6 @@
 import { createAction, handleActions } from 'redux-actions';
 import { createSelector } from 'reselect';
-import { deuceReached, getNextPoints, calculateDeuceScore, calculateWinner } from '../lib/game-logic';
+import { deuceReached, getNextPoints, calculateDeuceScore, calculateWinner, getScoreCall } from '../lib/game-logic';
 
 const actionsPrefix = 'tennis/game/';
 export const incrementPoints = createAction(`${actionsPrefix}INCREMENT_POINTS`);
@@ -17,8 +17,8 @@ const defaultState = {
 export default handleActions({
   [newGame]: () => defaultState,
 
-  [incrementPoints]: (state, { payload: player }) =>
-    ({ ...state, [`${player}Points`]: getNextPoints(state[`${player}Points`]) }),
+  [incrementPoints]: (state, { payload: playerIdx }) =>
+    ({ ...state, [`player${playerIdx + 1}Points`]: getNextPoints(state[`player${playerIdx + 1}Points`]) }),
 
   [deuceScorePoints]: (state, { payload: playerWhoScored }) => {
     const { playerWithAdvantage, deuceWinner } = calculateDeuceScore(state, playerWhoScored);
@@ -32,8 +32,14 @@ export const deuce = createSelector([
 ], (p1Points, p2Points) => deuceReached(p1Points, p2Points));
 
 export const winner = createSelector([
+  state => state.deuceWinner,
   state => state.player1Points,
   state => state.player2Points,
-  state => state.deuceWinner,
-], (p1Points, p2Points, deuceWinner) =>
-  calculateWinner({ player1: p1Points, player2: p2Points }, deuceWinner));
+], (...args) => calculateWinner(...args));
+
+export const scoreCall = createSelector([
+  deuce,
+  state => state.advantage,
+  state => state.player1Points,
+  state => state.player2Points,
+], (...args) => getScoreCall(...args));
