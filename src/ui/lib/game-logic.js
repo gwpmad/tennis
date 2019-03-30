@@ -17,7 +17,7 @@ export const calculateDeuceScore = ({ advantage }, playerWhoScored) => {
 };
 
 export const calculateWinner = (deuceWinner, ...playersPoints) => {
-  if (deuceWinner) return deuceWinner;
+  if (deuceWinner !== null) return deuceWinner;
   return playersPoints.reduce((winner, points, idx) => {
     if (winner !== null) return winner;
     return points > 40 ? idx : null;
