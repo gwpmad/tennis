@@ -46,7 +46,10 @@ class App extends Component {
     return (
       <div>
         <div>
-          <ScoreBoard />
+          <ScoreBoard
+            scoreCall={this.props.scoreCall}
+            set={this.props.set}
+          />
           <ScoreButton player={0} onClick={this.score} />
           <ScoreButton player={1} onClick={this.score} />
         </div>
@@ -77,6 +80,7 @@ export default connect(
     gameWinner: game.winner(state.game),
     setWinner: set.winner(state.set),
     tieBreak: set.tieBreak(state.set),
+    scoreCall: game.scoreCall(state.game),
   }),
   mapDispatchToProps,
 )(App);
